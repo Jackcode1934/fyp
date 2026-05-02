@@ -1,0 +1,35 @@
+network.host: "127.0.0.1"
+http.port: 9201
+transport.port: 9301
+node.name: "node-1"
+cluster.initial_master_nodes:
+- "node-1"
+
+cluster.name: "wazuh-cluster"
+
+node.max_local_storage_nodes: "3"
+path.data: /var/lib/wazuh-indexer
+path.logs: /var/log/wazuh-indexer
+
+plugins.security.ssl.transport.pemcert_filepath: certs/node.pem
+plugins.security.ssl.transport.pemkey_filepath: certs/node-key.pem
+plugins.security.ssl.transport.pemtrustedcas_filepath: certs/root-ca.pem
+plugins.security.ssl.http.enabled: true
+plugins.security.ssl.http.pemcert_filepath: certs/node.pem
+plugins.security.ssl.http.pemkey_filepath: certs/node-key.pem
+plugins.security.ssl.http.pemtrustedcas_filepath: certs/root-ca.pem
+
+plugins.security.nodes_dn:
+  - "CN=siem-node,OU=SIEM,O=Lab,C=IE"
+
+plugins.security.authcz.admin_dn:
+  - "CN=admin,OU=SIEM,O=Lab,C=IE"
+
+plugins.security.restapi.roles_enabled:
+- "all_access"
+- "security_rest_api_access"
+
+plugins.security.system_indices.enabled: true
+plugins.security.system_indices.indices: [".plugins-ml-model", ".plugins-ml-task", ".opendistro-alerting-config", ".opendistro-alerting-alert*", ".opendistro-anomaly-results*", ".opendistro-anomaly-detector*", ".opendistro-anomaly-checkpoints", ".opendistro-anomaly-detection-state", ".opendistro-reports-*", ".opensearch-notifications-*", ".opensearch-notebooks", ".opensearch-observability", ".opendistro-asynchronous-search-response*", ".replication-metadata-store"]
+
+compatibility.override_main_response_version: true
