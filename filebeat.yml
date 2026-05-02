@@ -1,0 +1,46 @@
+filebeat.inputs:
+
+ - type: filestream
+   id: wazuh-alerts
+   enabled: true
+   paths:
+     - /var/ossec/logs/alerts/alerts.json
+   parsers:
+     - ndjson:
+         target: ""
+         add_error_key: true
+
+ - type: filestream
+   id: wazuh-events
+   enabled: true
+   paths:
+     - /var/ossec/logs/archives/archives.json
+   parsers:
+     - ndjson:
+         target: ""
+         add_error_key: true
+
+ - type: filestream
+   id: oci-logs
+   enabled: true
+   paths:
+     - /opt/oci-logs/incoming/*.log
+   tags: ["oci_logs"]
+   scan_frequency: 5s
+   close.on_state_change.removed: false
+
+output.logstash:
+  hosts: ["127.0.0.1:5044"]
+
+filebeat.modules: []
+
+logging.level: debug
+logging.selectors: ["input", "harvester"]
+logging.to_files: true
+logging.files:
+  path: /var/log/filebeat
+  name: filebeat
+  keepfiles: 7
+  permissions: 0644
+
+logging.metrics.enabled: false
