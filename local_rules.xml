@@ -1,0 +1,150 @@
+
+  <group name="local,syslog,sshd,">
+    <rule id="100001" level="5">
+      <if_sid>5716</if_sid>
+      <srcip>1.1.1.1</srcip>
+      <description>sshd: authentication failed from IP 1.1.1.1.</description>
+      <group>authentication_failed,pci_dss_10.2.4,pci_dss_10.2.5,</group>
+    </rule>
+
+  </group>
+
+
+<group name="windows,authentication,custom">
+
+  <rule id="100101" level="7">
+    <field name="data.win.system.eventID">4625</field>
+    <description>Windows failed logon attempt</description>
+    <mitre>T1110</mitre>
+  </rule>
+
+ 
+  <rule id="100102"
+        level="12"
+        frequency="5"
+        timeframe="120">
+    <if_matched_sid>100101</if_matched_sid>
+    <description>Multiple Windows failed logon attempts (possible brute force)</description>
+    <mitre>T1110</mitre>
+  </rule>
+
+</group>
+
+<group name="windows,privilege,custom">
+
+  <rule id="100103" level="11">
+    <field name="data.win.system.eventID">4672</field>
+    <description>Windows special privileges assigned to logon</description>
+    <mitre>T1548</mitre>
+  </rule>
+
+</group>
+
+<group name="windows,process,custom">
+
+  <rule id="100104" level="9">
+    <field name="data.win.system.eventID">4688</field>
+    <match>powershell.exe|cmd.exe</match>
+    <description>Windows command shell executed</description>
+    <mitre>T1059</mitre>
+  </rule>
+
+</group>
+
+
+
+<group name="linux,sudo,privilege,custom">
+
+  <rule id="100203" level="9">
+    <match>sudo</match>
+    <description>Linux sudo command executed</description>
+    <mitre>T1548</mitre>
+  </rule>
+
+</group>
+
+
+
+<group name="linux,command,custom">
+
+  <rule id="100204" level="10">
+    <field name="data.command">curl|wget|nc|netcat</field>
+    <description>Suspicious network utility executed on Linux host</description>
+    <mitre>T1105</mitre>
+  </rule>
+
+</group>
+
+
+<group name="oci,cloud,authentication,custom">
+
+  
+  <rule id="200001" level="9">
+    <field name="oci.data.response.status">401|403|500</field>
+    <description>OCI API call failed</description>
+    <mitre>T1078</mitre>
+  </rule>
+
+  <rule id="200002"
+        level="12"
+        frequency="5"
+        timeframe="300">
+    <if_matched_sid>200001</if_matched_sid>
+    <description>Multiple failed OCI API calls (possible credential misuse)</description>
+    <mitre>T1110</mitre>
+  </rule>
+
+</group>
+
+
+<group name="oci,cloud,iam,custom">
+
+  <rule id="200003" level="13">
+    <field name="oci.data.eventName">
+      CreateUser|DeleteUser|UpdateUser|CreatePolicy|DeletePolicy|UpdatePolicy
+    </field>
+    <description>OCI identity or policy modification detected</description>
+    <mitre>T1098</mitre>
+  </rule>
+
+</group>
+
+
+
+<group name="oci,cloud,destruction,custom">
+
+  <rule id="200004" level="14">
+    <field name="oci.data.eventName">
+      DeleteBucket|TerminateInstance|DeleteVolume
+    </field>
+    <description>OCI destructive operation detected</description>
+    <mitre>T1485</mitre>
+  </rule>
+
+</group>
+
+
+
+
+<group name="oci,cloud,network,custom">
+
+  <rule id="200005" level="10">
+    <srcip>!10.0.0.0/8</srcip>
+    <description>OCI API activity not orginating from 10.0.0.0/8</description>
+    <mitre>T1078</mitre>
+  </rule>
+
+</group>
+
+
+
+<group name="oci,cloud,timebased,custom">
+
+  <rule id="200006" level="10">
+    <field name="oci.data.identity.principalName">.*</field>
+    <time>0-6</time>
+    <description>OCI administrative activity outside business hours</description>
+    <mitre>T1078</mitre>
+  </rule>
+
+</group>
